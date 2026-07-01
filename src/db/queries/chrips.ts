@@ -1,0 +1,21 @@
+import { asc, eq } from "drizzle-orm";
+import { db } from "../index.js";
+import { NewChirp, chirps } from "../schema.js";
+
+export async function createChrip(chirp: NewChirp): Promise<NewChirp | null> {
+  const [result] = await db
+    .insert(chirps)
+    .values(chirp)
+    .onConflictDoNothing()
+    .returning();
+  return result;
+}
+
+export async function getAllChirps(): Promise<NewChirp[] | null> {
+  return db.select().from(chirps).orderBy(asc(chirps.createdAt));
+}
+
+export async function getChirp(id: string): Promise<NewChirp | null> {
+  const [result] = await db.select().from(chirps).where(eq(chirps.id, id));
+  return result;
+}
