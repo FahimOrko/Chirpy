@@ -15,6 +15,13 @@
       "when": 1782878697182,
       "tag": "0001_brainy_the_fallen",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782937405362,
+      "tag": "0002_rapid_ma_gnuci",
+      "breakpoints": true
     }
   ]
 }

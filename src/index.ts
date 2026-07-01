@@ -7,13 +7,13 @@ import {
   handlerCreateNewChrip,
   handlerGetAllChirps,
   handlerGetChirp,
-} from "./handlers/chrip.js";
+} from "./handlers/chirp.js";
 import { handlerReadiness } from "./handlers/health.js";
 import {
   handlerGetServerHitCount,
   handlerResetServerHitCount,
 } from "./handlers/hitCount.js";
-import { handlerCreateNewUser } from "./handlers/user.js";
+import { handlerCreateNewUser, handlerLoginUser } from "./handlers/user.js";
 import { errorHandler } from "./middlewares/middlewareErrorHandler.js";
 import { middlewareLogging } from "./middlewares/middlewareLogging.js";
 import { middlewareMetricsInc } from "./middlewares/middlewareMetricsLogger.js";
@@ -35,6 +35,7 @@ app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 app.use("/admin/metrics", handlerGetServerHitCount);
 app.post("/admin/reset", handlerResetServerHitCount);
 app.post("/api/users", handlerCreateNewUser);
+app.post("/api/login", handlerLoginUser);
 app.post("/api/chirps", handlerCreateNewChrip);
 app.get("/api/chirps", handlerGetAllChirps);
 app.get("/api/chirps/:chirpId", handlerGetChirp);
