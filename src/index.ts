@@ -34,10 +34,12 @@ app.use(middlewareLogging);
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 app.use("/admin/metrics", handlerGetServerHitCount);
 app.post("/admin/reset", handlerResetServerHitCount);
+// User routes
 app.post("/api/users", handlerCreateNewUser);
 app.post("/api/login", handlerLoginUser);
-app.post("/api/chirps", handlerCreateNewChrip);
+// Chirp routes
 app.get("/api/chirps", handlerGetAllChirps);
+app.post("/api/chirps", handlerCreateNewChrip);
 app.get("/api/chirps/:chirpId", handlerGetChirp);
 
 // Health check

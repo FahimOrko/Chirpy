@@ -4,6 +4,7 @@ import {
   makeJWT,
   validateJWT,
   verifyPassword,
+  extractedHeader,
 } from "../api/auth.js";
 
 describe("Password Hashing", () => {
@@ -70,5 +71,55 @@ describe("JWT Token", () => {
 
   it("should throw for an diffrent user token", () => {
     expect(() => validateJWT(secondToken, firstUser.secret)).toThrow();
+  });
+});
+
+describe("Bearer Token Extraction", () => {
+  const firstUser = {
+    userID: "user1",
+    expiresIn: 3600, // 1 hour
+    secret: "mySecretKey1",
+  };
+
+  const secondUser = {
+    userID: "user2",
+    expiresIn: 3600, // 1 hour
+    secret: "mySecretKey2",
+  };
+
+  let firstToken: string;
+  let secondToken: string;
+  let firstHeader: string;
+  let secondHeader: string;
+  let invalidHeader: string;
+
+  beforeAll(async () => {
+    firstToken = await makeJWT(
+      firstUser.userID,
+      firstUser.expiresIn,
+      firstUser.secret,
+    );
+    secondToken = await makeJWT(
+      secondUser.userID,
+      secondUser.expiresIn,
+      secondUser.secret,
+    );
+    firstHeader = `Bearer ${firstToken}`;
+    secondHeader = `Bearer ${secondToken}`;
+    invalidHeader = `Invalid ${firstToken}`;
+  });
+
+  it("should extract the correct first token", async () => {
+    const result = await extractedHeader(firstHeader);
+    expect(result).toBe(firstToken);
+  });
+
+  it("should extract the correct second token", async () => {
+    const result = await extractedHeader(secondHeader);
+    expect(result).toBe(secondToken);
+  });
+
+  it("should throw for an invalid header", () => {
+    expect(() => extractedHeader(invalidHeader)).toThrow();
   });
 });

@@ -1,7 +1,9 @@
+import { config } from "../config.js";
 import { Request, Response } from "express";
 import { BadRequestError, NotFoundError } from "../errors/error.js";
 import { createChrip, getAllChirps, getChirp } from "../db/queries/chrips.js";
 import { respondWithJSON } from "../api/json.js";
+import { getBearerToken, validateJWT } from "../api/auth.js";
 
 type parameters = {
   userId: string;
@@ -9,7 +11,9 @@ type parameters = {
 };
 
 export async function handlerCreateNewChrip(req: Request, res: Response) {
-  const { userId, body }: parameters = req.body;
+  const token = getBearerToken(req);
+  const userId = validateJWT(token, config.api.jwtSecret);
+  const { body }: parameters = req.body;
   const notAllowedWords = ["kerfuffle", "sharbert", "fornax"];
 
   if (!userId || !body) {
