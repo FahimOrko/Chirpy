@@ -17,6 +17,10 @@ import { handlerCreateNewUser, handlerLoginUser } from "./handlers/user.js";
 import { errorHandler } from "./middlewares/middlewareErrorHandler.js";
 import { middlewareLogging } from "./middlewares/middlewareLogging.js";
 import { middlewareMetricsInc } from "./middlewares/middlewareMetricsLogger.js";
+import {
+  handlerGetNewJwtFromRefreshToken,
+  handlerRevokeRefreshToken,
+} from "./handlers/token.js";
 
 const ENVIRONMENT = "dev";
 const PORT = 8080;
@@ -41,6 +45,9 @@ app.post("/api/login", handlerLoginUser);
 app.get("/api/chirps", handlerGetAllChirps);
 app.post("/api/chirps", handlerCreateNewChrip);
 app.get("/api/chirps/:chirpId", handlerGetChirp);
+// Refresh Token Routes
+app.post("/api/refresh", handlerGetNewJwtFromRefreshToken);
+app.post("/api/revoke", handlerRevokeRefreshToken);
 
 // Health check
 app.get("/api/healthz", handlerReadiness);

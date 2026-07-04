@@ -27,13 +27,13 @@ describe("Password Hashing", () => {
 describe("JWT Token", () => {
   const firstUser = {
     userID: "user1",
-    expiresIn: 3600, // 1 hour
+
     secret: "mySecretKey1",
   };
 
   const secondUser = {
     userID: "user2",
-    expiresIn: 3600, // 1 hour
+
     secret: "mySecretKey2",
   };
 
@@ -42,17 +42,9 @@ describe("JWT Token", () => {
   let expiredToken: string;
 
   beforeAll(async () => {
-    firstToken = await makeJWT(
-      firstUser.userID,
-      firstUser.expiresIn,
-      firstUser.secret,
-    );
-    secondToken = await makeJWT(
-      secondUser.userID,
-      secondUser.expiresIn,
-      secondUser.secret,
-    );
-    expiredToken = await makeJWT(firstUser.userID, -1, firstUser.secret);
+    firstToken = await makeJWT(firstUser.userID, firstUser.secret);
+    secondToken = await makeJWT(secondUser.userID, secondUser.secret);
+    expiredToken = await makeJWT(firstUser.userID, firstUser.secret);
   });
 
   it("should return the correct first user ID", async () => {
@@ -77,13 +69,11 @@ describe("JWT Token", () => {
 describe("Bearer Token Extraction", () => {
   const firstUser = {
     userID: "user1",
-    expiresIn: 3600, // 1 hour
     secret: "mySecretKey1",
   };
 
   const secondUser = {
     userID: "user2",
-    expiresIn: 3600, // 1 hour
     secret: "mySecretKey2",
   };
 
@@ -94,16 +84,8 @@ describe("Bearer Token Extraction", () => {
   let invalidHeader: string;
 
   beforeAll(async () => {
-    firstToken = await makeJWT(
-      firstUser.userID,
-      firstUser.expiresIn,
-      firstUser.secret,
-    );
-    secondToken = await makeJWT(
-      secondUser.userID,
-      secondUser.expiresIn,
-      secondUser.secret,
-    );
+    firstToken = await makeJWT(firstUser.userID, firstUser.secret);
+    secondToken = await makeJWT(secondUser.userID, secondUser.secret);
     firstHeader = `Bearer ${firstToken}`;
     secondHeader = `Bearer ${secondToken}`;
     invalidHeader = `Invalid ${firstToken}`;

@@ -12,7 +12,12 @@ import {
 } from "../db/queries/users.js";
 import { respondWithJSON } from "../api/json.js";
 import { config } from "../config.js";
-import { hashPassword, makeJWT, verifyPassword } from "../api/auth.js";
+import {
+  hashPassword,
+  makeJWT,
+  makeRefreshToken,
+  verifyPassword,
+} from "../api/auth.js";
 import { LoggedInUser } from "../types/users.js";
 
 type parameters = {
@@ -46,12 +51,6 @@ export async function handlerLoginUser(req: Request, res: Response) {
     );
   }
 
-  let exp = 60 * 60;
-
-  if (req.body.expiresInSeconds < exp) {
-    exp = req.body.expiresInSeconds;
-  }
-
   const user = await getUserByEmail(email);
 
   if (!user) throw new NotFoundError("User with email not found");
@@ -61,7 +60,8 @@ export async function handlerLoginUser(req: Request, res: Response) {
   if (!isValidPassword) throw new UnauthorizedError("Unauthorized");
 
   const jwtSecret = config.api.jwtSecret;
-  const jwt = await makeJWT(user.id, exp, jwtSecret);
+  const jwt = makeJWT(user.id, jwtSecret);
+  const refreshToken = await makeRefreshToken(user.id);
 
   const loggedInUser: LoggedInUser = {
     id: user.id,
@@ -69,6 +69,7 @@ export async function handlerLoginUser(req: Request, res: Response) {
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
     token: jwt,
+    refreshToken: refreshToken,
   };
 
   respondWithJSON(res, 200, loggedInUser);

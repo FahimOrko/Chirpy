@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import type { JwtPayload } from "jsonwebtoken";
 import type { Request, Response } from "express";
 import { UserNotAuthenticatedError } from "../errors/error.js";
+import crypto from "node:crypto";
+import { createRefreshToken } from "../db/queries/refreshTokens.js";
 
 type payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
 
@@ -19,13 +21,9 @@ export async function verifyPassword(
   return isValid;
 }
 
-export function makeJWT(
-  userID: string,
-  expiresIn: number,
-  secret: string,
-): string {
+export function makeJWT(userID: string, secret: string): string {
   const iat = Math.floor(Date.now() / 1000);
-  const exp = iat + expiresIn;
+  const exp = iat + 60 * 60;
   const iss = "chirpy";
   return jwt.sign({ sub: userID, iat, exp, iss }, secret);
 }
@@ -63,4 +61,16 @@ export function extractedHeader(header: string) {
     throw new UserNotAuthenticatedError("Invalid authorization header");
   }
   return header.split(" ")[1];
+}
+
+export async function makeRefreshToken(userID: string): Promise<string> {
+  if (!userID) {
+    throw new UserNotAuthenticatedError("No user ID provided");
+  }
+  const buf = crypto.randomBytes(32);
+  const token = buf.toString("hex");
+
+  const result = await createRefreshToken(userID, token);
+
+  return token;
 }

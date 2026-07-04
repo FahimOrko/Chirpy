@@ -22,6 +22,13 @@
       "when": 1782937405362,
       "tag": "0002_rapid_ma_gnuci",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1783194378962,
+      "tag": "0003_freezing_sharon_ventura",
+      "breakpoints": true
     }
   ]
 }
