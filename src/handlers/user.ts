@@ -9,13 +9,17 @@ import {
   createUser,
   deleteAllUsers,
   getUserByEmail,
+  getUserById,
+  updateUserById,
 } from "../db/queries/users.js";
 import { respondWithJSON } from "../api/json.js";
 import { config } from "../config.js";
 import {
+  getBearerToken,
   hashPassword,
   makeJWT,
   makeRefreshToken,
+  validateJWT,
   verifyPassword,
 } from "../api/auth.js";
 import { LoggedInUser } from "../types/users.js";
@@ -83,4 +87,28 @@ export async function handlerDeleteAllUsers(req: Request, res: Response) {
   }
 
   await deleteAllUsers();
+}
+
+export async function handlerUpdateUser(req: Request, res: Response) {
+  const { email, password }: parameters = req.body;
+  if (!email || !password) {
+    throw new BadRequestError("Email and password are required");
+  }
+
+  const hashedPassword = await hashPassword(password);
+  const token = getBearerToken(req);
+  const userId = validateJWT(token, config.api.jwtSecret);
+
+  if (!userId) {
+    throw new BadRequestError("Invalid or missing JWT token");
+  }
+
+  const user = await getUserById(userId);
+
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
+
+  const updatedUser = await updateUserById(userId, email, hashedPassword);
+  respondWithJSON(res, 200, updatedUser);
 }

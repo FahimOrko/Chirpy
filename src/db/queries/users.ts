@@ -16,6 +16,28 @@ export async function getUserByEmail(email: string) {
   return user;
 }
 
+export async function getUserById(userId: string) {
+  const [user] = await db.select().from(users).where(eq(users.id, userId));
+  return user;
+}
+
+export async function updateUserById(
+  userId: string,
+  email: string,
+  hashedPassword: string,
+): Promise<UserSafe> {
+  const [updated] = await db
+    .update(users)
+    .set({ email, hashedPassword })
+    .where(eq(users.id, userId))
+    .returning();
+
+  const { hashedPassword: password, ...userWithoutPassword } = updated;
+  return userWithoutPassword;
+}
+
 export async function deleteAllUsers() {
   await db.delete(users);
 }
+
+type UserSafe = Omit<typeof users.$inferSelect, "hashedPassword">;
