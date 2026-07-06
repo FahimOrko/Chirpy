@@ -114,3 +114,4 @@ export async function handlerDeleteChirp(req: Request, res: Response) {
 
   respondWithJSON(res, 204, deletedChirp);
 }
+

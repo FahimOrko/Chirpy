@@ -63,6 +63,17 @@ export function extractedHeader(header: string) {
   return header.split(" ")[1];
 }
 
+export function getAPIKey(req: Request): string {
+  const authHeader = req.get("Authorization");
+  if (!authHeader) {
+    throw new UserNotAuthenticatedError("No authorization header");
+  }
+  if (authHeader.split(" ")[0] !== "ApiKey") {
+    throw new UserNotAuthenticatedError("Invalid authorization header");
+  }
+  return authHeader.split(" ")[1];
+}
+
 export async function makeRefreshToken(userID: string): Promise<string> {
   if (!userID) {
     throw new UserNotAuthenticatedError("No user ID provided");

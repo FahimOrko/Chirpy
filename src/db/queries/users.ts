@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "../index.js";
-import { NewUser, users } from "../schema.js";
+import { chirps, NewChirp, NewUser, users } from "../schema.js";
 
 export async function createUser(user: NewUser): Promise<NewUser | null> {
   const [result] = await db
@@ -8,7 +8,8 @@ export async function createUser(user: NewUser): Promise<NewUser | null> {
     .values(user)
     .onConflictDoNothing()
     .returning();
-  return result;
+  const { hashedPassword, ...userWithoutPassword } = result;
+  return userWithoutPassword;
 }
 
 export async function getUserByEmail(email: string) {
@@ -33,6 +34,16 @@ export async function updateUserById(
     .returning();
 
   const { hashedPassword: password, ...userWithoutPassword } = updated;
+  return userWithoutPassword;
+}
+
+export async function updateChirpyRed(id: string, isChirpyRed: boolean) {
+  const [result] = await db
+    .update(users)
+    .set({ isChirpyRed })
+    .where(eq(users.id, id))
+    .returning();
+  const { hashedPassword, ...userWithoutPassword } = result;
   return userWithoutPassword;
 }
 

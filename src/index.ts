@@ -18,6 +18,7 @@ import {
   handlerCreateNewUser,
   handlerLoginUser,
   handlerUpdateUser,
+  handlerChipyWeebhook,
 } from "./handlers/user.js";
 import { errorHandler } from "./middlewares/middlewareErrorHandler.js";
 import { middlewareLogging } from "./middlewares/middlewareLogging.js";
@@ -46,11 +47,12 @@ app.post("/admin/reset", handlerResetServerHitCount);
 // User routes
 app.post("/api/users", handlerCreateNewUser);
 app.post("/api/login", handlerLoginUser);
+app.post("/api/polka/webhooks", handlerChipyWeebhook);
 app.put("/api/users", handlerUpdateUser);
 // Chirp routes
 app.get("/api/chirps", handlerGetAllChirps);
-app.post("/api/chirps", handlerCreateNewChrip);
 app.get("/api/chirps/:chirpId", handlerGetChirp);
+app.post("/api/chirps", handlerCreateNewChrip);
 app.delete("/api/chirps/:chirpId", handlerDeleteChirp);
 // Refresh Token Routes
 app.post("/api/refresh", handlerGetNewJwtFromRefreshToken);

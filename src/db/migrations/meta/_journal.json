@@ -29,6 +29,20 @@
       "when": 1783194378962,
       "tag": "0003_freezing_sharon_ventura",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1783353942116,
+      "tag": "0004_jazzy_genesis",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1783355078315,
+      "tag": "0005_yummy_rictor",
+      "breakpoints": true
     }
   ]
 }
