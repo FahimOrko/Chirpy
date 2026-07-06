@@ -9,10 +9,12 @@ import {
   createChrip,
   deleteChirp,
   getAllChirps,
+  getAllChirpsByUserId,
   getChirp,
 } from "../db/queries/chrips.js";
 import { respondWithJSON } from "../api/json.js";
 import { getBearerToken, validateJWT } from "../api/auth.js";
+import { getAuthorIdFromQuery, getQueryOrder } from "../utils/common.js";
 
 type parameters = {
   userId: string;
@@ -54,8 +56,19 @@ export async function handlerCreateNewChrip(req: Request, res: Response) {
 }
 
 export async function handlerGetAllChirps(req: Request, res: Response) {
-  const chirps = await getAllChirps();
+  const authorId = getAuthorIdFromQuery(req);
+  const queryOrder = getQueryOrder(req);
 
+  if (authorId) {
+    const chirps = await getAllChirpsByUserId(authorId, queryOrder);
+    if (!chirps) {
+      throw new BadRequestError("Failed to retrieve chirps");
+    }
+    respondWithJSON(res, 200, chirps);
+    return;
+  }
+
+  const chirps = await getAllChirps(queryOrder);
   if (!chirps) {
     throw new BadRequestError("Failed to retrieve chirps");
   }
@@ -114,4 +127,3 @@ export async function handlerDeleteChirp(req: Request, res: Response) {
 
   respondWithJSON(res, 204, deletedChirp);
 }
-
